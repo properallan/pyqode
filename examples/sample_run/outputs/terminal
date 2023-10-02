@@ -1,0 +1,52 @@
+################################################################################
+                           -*- Q1D Euler Solver -*-
+Eigen 3.3.7
+Allan Moreira de Carvalho
+################################################################################
+                           -*- Setup Information -*-
+################################################################################
+# Domain x-coordinates at cell faces (no need for ghost cells)
+./sample_run/inputs/xn.txt
+# Area distributuin at cell faces (no need for ghost cells)
+./sample_run/inputs/Sn.txt
+# Inlet Total Pressure [Pa]
+1191000.0
+# Inlet Total Temperature [K]
+842.78
+# Inlet Mach Number
+0.01
+# Outlet Static Pressure [Pa]
+101000.0
+# Gas constant [J/kg/K]
+287.0
+# Specific heat ratio
+1.4
+# Maximum number of iterations 
+50000
+# Interval to print iterations 
+1000
+# CFL number 
+0.15
+# Convergence criteria 
+1e-06
+# Time integration scheme (Euler, RK4) 
+RK4
+# Flux scheme (Basic, Roe, Split, SplitTVD, VanLeer, LaxFriedrichs, StegerWarming, AUSM) 
+AUSM
+# Timestep type (Global, Local) 
+Global
+# Form to be solved (Dimensional, Dimensionless) 
+Dimensionless
+# Set output directory 
+./sample_run/outputs/
+################################################################################
+                           -*- Start Solving -*-
+################################################################################
+	 	 	     Maximum Residue
+Iteration 	Mass		Momentum	Energy
+1000		6.50936e-05	7.93054e-05	0.000288601
+2000		3.67401e-06	7.87082e-06	1.50616e-05
+3000		1.27778e-06	1.39066e-06	4.60692e-06
+################################################################################
+                           -*- Saving Results -*-
+################################################################################

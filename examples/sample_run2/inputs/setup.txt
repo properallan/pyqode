@@ -1,0 +1,34 @@
+# Domain x-coordinates at cell faces (no need for ghost cells)
+/home/ppiper/Dropbox/local/github/pyqode/examples/sample_run2/inputs/inputs/xn.txt
+# Area distributuin at cell faces (no need for ghost cells)
+/home/ppiper/Dropbox/local/github/pyqode/examples/sample_run2/inputs/inputs/sn.txt
+# Inlet Total Pressure [Pa]
+1191000.0
+# Inlet Total Temperature [K]
+842.78
+# Inlet Mach Number
+0.01
+# Outlet Static Pressure [Pa]
+101000.0
+# Gas constant [J/kg/K]
+287.0
+# Specific heat ratio
+1.4
+# Maximum number of iterations 
+50000
+# Interval to print iterations 
+10
+# CFL number 
+0.15
+# Convergence criteria 
+1e-06
+# Time integration scheme (Euler, RK4) 
+RK4
+# Flux scheme (Basic, Roe, Split, SplitTVD, VanLeer, LaxFriedrichs, StegerWarming, AUSM) 
+AUSM
+# Timestep type (Global, Local) 
+Global
+# Form to be solved (Dimensional, Dimensionless) 
+Dimensionless
+# Set output directory 
+/home/ppiper/Dropbox/local/github/pyqode/examples/sample_run2/inputs/outputs/

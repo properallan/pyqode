@@ -1,0 +1,34 @@
+# Domain x-coordinates at cell faces (no need for ghost cells)
+/home/ppiper/Dropbox/local/github/pyqode/examples/nasa_cdv/inputs/xn.txt
+# Area distributuin at cell faces (no need for ghost cells)
+/home/ppiper/Dropbox/local/github/pyqode/examples/nasa_cdv/inputs/sn.txt
+# Inlet Total Pressure [Pa]
+6894.76
+# Inlet Total Temperature [K]
+55.55555555555556
+# Inlet Mach Number
+0.01
+# Outlet Static Pressure [Pa]
+5171.07
+# Gas constant [J/kg/K]
+287.0
+# Specific heat ratio
+1.4
+# Maximum number of iterations 
+500000
+# Interval to print iterations 
+1
+# CFL number 
+0.1
+# Convergence criteria 
+1e-10
+# Time integration scheme (Euler, RK4) 
+Euler
+# Flux scheme (Basic, Roe, Split, SplitTVD, VanLeer, LaxFriedrichs, StegerWarming, AUSM) 
+AUSM
+# Timestep type (Global, Local) 
+Global
+# Form to be solved (Dimensional, Dimensionless) 
+Dimensionless
+# Set output directory 
+/home/ppiper/Dropbox/local/github/pyqode/examples/nasa_cdv/outputs/

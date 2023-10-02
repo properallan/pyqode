@@ -1,0 +1,59 @@
+################################################################################
+                           -*- Q1D Euler Solver -*-
+Eigen 3.3.7
+Allan Moreira de Carvalho
+################################################################################
+                           -*- Setup Information -*-
+################################################################################
+# Domain x-coordinates at cell faces (no need for ghost cells)
+./sod_shock/inputs/xn.txt
+# Area distributuin at cell faces (no need for ghost cells)
+./sod_shock/inputs/Sn.txt
+# Inlet Total Pressure [Pa]
+1.0
+# Inlet Total Temperature [K]
+0.003484320557491289
+# Inlet Mach Number
+0.0
+# Outlet Static Pressure [Pa]
+0.1
+# Gas constant [J/kg/K]
+287.0
+# Specific heat ratio
+1.4
+# Maximum number of iterations 
+50000
+# Interval to print iterations 
+1000
+# CFL number 
+0.15
+# Convergence criteria 
+1e-06
+# Time integration scheme (Euler, RK4) 
+RK4
+# Flux scheme (Basic, Roe, Split, SplitTVD, VanLeer, LaxFriedrichs, StegerWarming, AUSM) 
+AUSM
+# Timestep type (Global, Local) 
+Global
+# Form to be solved (Dimensional, Dimensionless) 
+Dimensionless
+# Set output directory 
+./sod_shock/outputs/
+################################################################################
+                           -*- Start Solving -*-
+################################################################################
+	 	 	     Maximum Residue
+Iteration 	Mass		Momentum	Energy
+1000		3.54222e-05	2.36844e-05	9.91294e-05
+2000		9.25489e-06	3.52891e-06	2.43167e-05
+3000		4.21173e-06	1.22721e-06	1.08884e-05
+4000		2.40168e-06	5.9613e-07	6.16616e-06
+5000		1.55092e-06	3.45561e-07	3.96678e-06
+6000		1.08427e-06	2.23325e-07	2.76651e-06
+7000		8.00907e-07	1.5531e-07	2.04e-06
+8000		6.15951e-07	1.13849e-07	1.56688e-06
+9000		4.88551e-07	8.68237e-08	1.24154e-06
+10000		3.97058e-07	6.82829e-08	1.0082e-06
+################################################################################
+                           -*- Saving Results -*-
+################################################################################
