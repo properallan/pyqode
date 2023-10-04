@@ -28,6 +28,7 @@ dask==2022.11.1
 debugpy==1.6.3
 decorator==5.1.1
 defusedxml==0.7.1
+docopt==0.6.2
 ene300==0.1
 entrypoints==0.4
 executing==1.1.1
@@ -87,6 +88,7 @@ pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==9.4.0
 pip==23.2.1
+pipreqs==0.4.13
 platformdirs==3.2.0
 pooch==1.7.0
 prometheus-client==0.16.0
@@ -149,6 +151,7 @@ websockets==11.0.1
 wheel==0.41.0
 widgetsnbextension==3.6.4
 wslink==1.11.4
+yarg==0.1.9
 yarl==1.9.2
 zipp==3.16.2
 zope.interface==6.0
