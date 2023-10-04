@@ -3,7 +3,7 @@
 # Area distributuin at cell faces (no need for ghost cells)
 /home/ppiper/Dropbox/local/github/pyqode/examples/back/1D/inputs/sn.txt
 # Inlet Total Pressure [Pa]
-693612.856
+310953.67600000004
 # Inlet Total Temperature [K]
 833.3333333333333
 # Inlet Mach Number
