@@ -1,9 +1,9 @@
 # Domain x-coordinates at cell faces (no need for ghost cells)
-/home/ppiper/Dropbox/local/github/pyqode/examples/back/1D/inputs/xn.txt
+/home/ppiper/Dropbox/xps/pyqode/examples/back/1D/inputs/xn.txt
 # Area distributuin at cell faces (no need for ghost cells)
-/home/ppiper/Dropbox/local/github/pyqode/examples/back/1D/inputs/sn.txt
+/home/ppiper/Dropbox/xps/pyqode/examples/back/1D/inputs/sn.txt
 # Inlet Total Pressure [Pa]
-414375.076
+693612.856
 # Inlet Total Temperature [K]
 833.3333333333333
 # Inlet Mach Number
@@ -31,4 +31,4 @@ Global
 # Form to be solved (Dimensional, Dimensionless) 
 Dimensionless
 # Set output directory 
-/home/ppiper/Dropbox/local/github/pyqode/examples/back/1D/outputs/
+/home/ppiper/Dropbox/xps/pyqode/examples/back/1D/outputs/
