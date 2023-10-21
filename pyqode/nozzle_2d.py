@@ -84,7 +84,7 @@ def gen_wall_mesh(xn, Sn, thickness, Nx, Ny, inflation_rate, output_file, gmshso
             
     return (output_file).resolve().with_suffix('.msh').__str__()
 
-def gen_nozzle_mesh(xn, rn, Nx, Ny, inflation_rate, output_file, gmshsolver, symmetry=False, using='Progression'):
+def gen_nozzle_mesh(xn, rn, Nx, Ny, inflation_rate, output_file, gmshsolver, symmetry=False, using='Progression', hwall_n=0.00001, thickness=0.01, ratio=1.2, beta=1.001, nblayers=10):
     x0 = xn[0]
     L = xn[-1]-xn[0]
     x = xn
@@ -141,6 +141,8 @@ def gen_nozzle_mesh(xn, rn, Nx, Ny, inflation_rate, output_file, gmshsolver, sym
     os.makedirs(output_file.parent, exist_ok=True)
 
     geofilename = output_file.with_suffix('.geo')
+
+    geo.addBoundaryLayer(edges=[upper_wall], nodes=[wp[0],wp[-1]], hwall_n=hwall_n, ratio=ratio, thickness=thickness, beta=beta, nblayers=nblayers)
 
     geo.writeFile(geofilename)
 

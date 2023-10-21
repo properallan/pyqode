@@ -1,0 +1,20 @@
+<VTKFile type="vtkMultiBlockDataSet" version="1.0">
+<vtkMultiBlockDataSet>
+<Block name="Zone 0 (Comp. Fluid)">
+<Block name="Internal">
+<DataSet name="Internal" file="flow/zone_0/Internal.vtu"/>
+</Block>
+<Block name="Boundary">
+<DataSet name="SYMMETRY" file="flow/zone_0/SYMMETRY.vtu"/>
+<DataSet name="INFLOW" file="flow/zone_0/INFLOW.vtu"/>
+<DataSet name="OUTFLOW" file="flow/zone_0/OUTFLOW.vtu"/>
+<DataSet name="UPPER_WALL" file="flow/zone_0/UPPER_WALL.vtu"/>
+</Block>
+</Block>
+</vtkMultiBlockDataSet>
+<FieldData>
+<DataArray type='Float32' Name='TimeValue'>
+0
+</DataArray>
+</FieldData>
+</VTKFile>

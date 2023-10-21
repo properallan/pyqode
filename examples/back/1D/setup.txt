@@ -1,9 +1,9 @@
 # Domain x-coordinates at cell faces (no need for ghost cells)
-/home/ppiper/Dropbox/xps/pyqode/examples/back/1D/inputs/xn.txt
+/home/ppiper/Documents/doctorate/src/pyqode/examples/back/1D/inputs/xn.txt
 # Area distributuin at cell faces (no need for ghost cells)
-/home/ppiper/Dropbox/xps/pyqode/examples/back/1D/inputs/sn.txt
+/home/ppiper/Documents/doctorate/src/pyqode/examples/back/1D/inputs/sn.txt
 # Inlet Total Pressure [Pa]
-693612.856
+1725068.952
 # Inlet Total Temperature [K]
 833.3333333333333
 # Inlet Mach Number
@@ -17,7 +17,7 @@
 # Maximum number of iterations 
 50000
 # Interval to print iterations 
-1
+1.01
 # CFL number 
 0.5
 # Convergence criteria 
@@ -31,4 +31,4 @@ Global
 # Form to be solved (Dimensional, Dimensionless) 
 Dimensionless
 # Set output directory 
-/home/ppiper/Dropbox/xps/pyqode/examples/back/1D/outputs/
+/home/ppiper/Documents/doctorate/src/pyqode/examples/back/1D/outputs/
