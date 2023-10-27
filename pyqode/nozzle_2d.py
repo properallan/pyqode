@@ -5,6 +5,8 @@ import subprocess
 from pyqode.meshing import Gmsh
 from pathlib import Path
 
+GMSH = Path(__file__).parent / 'src' / 'gmsh'
+
 def nasa_cdv_nozzle_verification_geometry(npts):
     X = np.linspace(0,10,npts)
     area = np.zeros_like(X)
@@ -83,6 +85,96 @@ def gen_wall_mesh(xn, Sn, thickness, Nx, Ny, inflation_rate, output_file, gmshso
     p.wait()
             
     return (output_file).resolve().with_suffix('.msh').__str__()
+
+
+def gen_nozzle_mesh_from_config(config, gmshsolver=GMSH):
+    xn = config['domain_x']
+    rn = area_to_radius(config['domain_area'])
+    symmetry = config['domain_axisymmetric']
+    Nx = config['domain_Nx']
+    Ny = config['domain_Ny']
+    inflation_rate = config['domain_inflation_rate']
+    using='Progression'
+    hwall_n=config['domain_hwall_n']
+    beta=config['domain_bl_beta']
+    nblayers=config['domain_bl_nblayers']
+    output_file = Path(config['working_dir']).resolve() / config['domain_mesh']
+
+    x0 = xn[0]
+    L = xn[-1]-xn[0]
+    x = xn
+    r = rn
+
+    geo = Gmsh()
+
+    geo.writeLine('cl__1 = 1;\n')
+
+    wp = []
+    for xi,ri in zip(x,r):
+        wp.append(  geo.addPoint(xi, ri, 0) )
+
+    upper_wall_points = wp
+    upper_wall = geo.addLine(wp)
+    geo.transfiniteLine(upper_wall, Nx, 1)
+
+    if symmetry == 'YES':
+        bottom_wall_points = []
+        for xi in x:
+            bottom_wall_points.append(  geo.addPoint(xi, 0, 0) )
+        bottom_wall = geo.addLine(bottom_wall_points)
+    elif symmetry == 'NO':
+        bottom_wall_points = [i + len(wp) for i in wp]
+        bwp = bottom_wall_points
+        bottom_wall = geo.addSymmetryCurve([0,1,0], upper_wall)
+        
+    geo.transfiniteLine(bottom_wall, Nx, 1)
+
+    inflow = geo.addLine([upper_wall_points[0], bottom_wall_points[0]])
+    geo.transfiniteLine(inflow, Ny, inflation_rate, using=using)
+
+    outflow = geo.addLine([upper_wall_points[-1], bottom_wall_points[-1]])
+    geo.transfiniteLine(outflow, Ny, inflation_rate, using=using)
+
+    loop1 = geo.addLoop([upper_wall,outflow,-bottom_wall,-inflow])
+    surface1 = geo.addPlaneSurface([loop1])
+
+    geo.transfiniteSurface(surface1, [upper_wall_points[0],upper_wall_points[-1],bottom_wall_points[-1],bottom_wall_points[0]])
+    geo.recombineSurface(surface1)
+
+    # add boundary
+    geo.addPhysicalLine("UPPER_WALL",upper_wall)
+    if symmetry == 'YES':
+        geo.addPhysicalLine("SYMMETRY",bottom_wall)
+    elif symmetry == 'NO':
+        geo.addPhysicalLine("BOTTOM_WALL",bottom_wall)
+    geo.addPhysicalLine("INFLOW",inflow)
+    geo.addPhysicalLine("OUTFLOW",outflow)
+
+    geo.addPhysicalSurface(surface1)
+
+    output_file = Path(output_file)
+
+    os.makedirs(output_file.parent, exist_ok=True)
+
+    geofilename = output_file.with_suffix('.geo')
+    
+    if symmetry == 'NO' and nblayers>0:    
+        geo.addBoundaryLayer(edges=[upper_wall], nodes=[wp[0],wp[-1]], hwall_n=hwall_n, ratio=0, thickness=0, beta=beta, nblayers=nblayers)
+        geo.addBoundaryLayer(edges=[bottom_wall], nodes=[bwp[0],bwp[-1]], hwall_n=hwall_n, ratio=0, thickness=0, beta=beta, nblayers=nblayers)
+    elif symmetry == 'YES' and nblayers>0:
+        geo.addBoundaryLayer(edges=[upper_wall], nodes=[wp[0],wp[-1]], hwall_n=hwall_n, ratio=0, thickness=0, beta=beta, nblayers=nblayers)
+
+    geo.writeFile(geofilename)
+
+    p = subprocess.Popen([f'{gmshsolver}', geofilename,'-0','-2','-format','su2','-o', output_file.with_suffix('.su2')])
+    p.wait()
+    p = subprocess.Popen([f'{gmshsolver}', geofilename,'-0','-2','-format','msh','-o', output_file.with_suffix('.msh')])
+    p.wait()
+    p = subprocess.Popen([f'{gmshsolver}', geofilename,'-0','-2','-format','msh','-o', output_file.with_suffix('.vtk')])
+    p.wait()
+
+    return output_file.resolve().with_suffix('.su2').__str__()
+
 
 def gen_nozzle_mesh(xn, rn, Nx, Ny, inflation_rate, output_file, gmshsolver, symmetry=False, using='Progression', hwall_n=0.00001, thickness=0.01, ratio=1.2, beta=1.001, nblayers=10):
     x0 = xn[0]

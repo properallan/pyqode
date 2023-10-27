@@ -7,14 +7,16 @@ from scipy import interpolate
 from typing import Union
 from pyqode.utils import parse_su2_config
 from numpy import interp
+from pyqode.nozzle_2d import gen_nozzle_mesh_from_config
+import ray
 
 PYQODE_SOLVER = Path(__file__).parent / 'src' / 'eulerQ1D'
-SU2_SOLVER = Path(__file__).parent / 'src' / 'SU2'
+#SU2_SOLVER = Path(__file__).parent / 'src' / 'SU2_CFD'
+SU2_SOLVER = Path(__file__).parent / 'src' / 'SU2-v8.0.0-linux64/bin/SU2_CFD'
 
 class PostProcessor:
     def __init__(self, path: str|Path):
         for file_ in Path(path).glob('*.txt'):
-            print(file_.stem)
             self.__setattr__(file_.stem, np.loadtxt(file_))
 
 class Solver:
@@ -45,8 +47,10 @@ class Solver:
         working_dir = Path(config['working_dir']).resolve()
         setup_file = working_dir / 'setup.txt'
         input_path = setup_file.parent / 'inputs'
+        self.input_path = input_path
         os.makedirs(input_path, exist_ok=True)
         output_path = setup_file.parent / 'outputs'
+        self.output_path = output_path
         os.makedirs(output_path, exist_ok=True)
         domain_x_file = input_path / 'xn.txt'
         domain_s_file = input_path / 'sn.txt'
@@ -113,6 +117,11 @@ def gen_su2_setup(template, config, output_file):
 
     return Path(output_file).resolve().__str__()
 
+def gen_su2_setup_from_config(config):
+    template = Path(config['su2_template']).resolve()
+    output_file = Path(config['working_dir']).resolve() / Path(config['su2_config'])
+    gen_su2_setup(template, config, output_file)
+
 def gen_multizone_su2_setup(template, config, output_file, config_list):
     config['config_list'] = config_list
     output_file = gen_su2_setup(template, config, output_file)
@@ -120,10 +129,21 @@ def gen_multizone_su2_setup(template, config, output_file, config_list):
 
 class SU2Solver:
     def __init__(self, 
-        config_file: Union[str, Path],
-        executable : Union[str,Path] = SU2_SOLVER):
-        self.config_file = Path(config_file).resolve()
+        config: Union[str, Path] = None,
+        executable : Union[str,Path] = SU2_SOLVER,
+        meshing_function = gen_nozzle_mesh_from_config):
+
+        self.config_file = Path(config['working_dir']).resolve() / Path(config['su2_config'])
+        self.config = config
         self.executable = Path(executable).resolve()
+        self.meshing(self.config, meshing_function=meshing_function)
+        self.setup(self.config)
+
+    def meshing(self, config, meshing_function):
+        self.mesh_file = meshing_function(config=config)
+
+    def setup(self, config):
+        gen_su2_setup_from_config(config)
 
     def run(self, config_file: Union[str,Path]=None, cwd: Union[str,Path]=None):
         if config_file is None:
@@ -138,3 +158,20 @@ class SU2Solver:
         p.wait()
         self.runtime = timeit.default_timer() - self.runtime
         print('runtime: ' + str(self.runtime) + 's')
+
+
+@ray.remote
+class SolverRemote(Solver):
+    def __init__(self, 
+            config: dict,
+            executable : Union[str,Path] = PYQODE_SOLVER):
+        super().__init__(config, executable)
+
+@ray.remote
+class SU2SolverRemote(SU2Solver):
+    def __init__(self, 
+        config: Union[str, Path] = None,
+        executable : Union[str,Path] = SU2_SOLVER,
+        meshing_function = gen_nozzle_mesh_from_config):
+
+        super().__init__(config, executable, meshing_function)
