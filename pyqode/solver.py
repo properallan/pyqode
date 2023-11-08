@@ -26,8 +26,6 @@ class Solver:
         self.config = config
         self.executable = executable
 
-        self.setup(self.config)
-
     def interpolate_domain(self, config):
         x = config['domain_x']
         area = config['domain_area']
@@ -98,6 +96,8 @@ class Solver:
         self.setup_file = setup_file
 
     def run(self, setupfile: str|Path=None):
+        self.setup(self.config)
+
         if setupfile is None:
             setupfile = self.setup_file
 
@@ -106,6 +106,17 @@ class Solver:
         p.wait()
         self.runtime = timeit.default_timer() - self.runtime
         print('runtime: ' + str(self.runtime) + 's')
+        
+        if 'bc_Tw' in self.config.keys():
+            T_wall= self.config['bc_Tw']
+            T = np.loadtxt(self.output_path / 'T.txt')
+            np.savetxt(self.output_path  / 'T_wall.txt', np.ones_like(T) * T_wall)
+
+class RaySolver(Solver):
+    def __init__(self, 
+            config: dict,
+            executable : Union[str,Path] = PYQODE_SOLVER):
+        super().__init__(config, executable)
 
 
 def gen_su2_setup(template, config, output_file): 
@@ -159,16 +170,15 @@ class SU2Solver:
         self.runtime = timeit.default_timer() - self.runtime
         print('runtime: ' + str(self.runtime) + 's')
 
-
 @ray.remote
-class SolverRemote(Solver):
+class RaySolver(Solver):
     def __init__(self, 
             config: dict,
             executable : Union[str,Path] = PYQODE_SOLVER):
         super().__init__(config, executable)
 
 @ray.remote
-class SU2SolverRemote(SU2Solver):
+class RaySU2Solver(SU2Solver):
     def __init__(self, 
         config: Union[str, Path] = None,
         executable : Union[str,Path] = SU2_SOLVER,
