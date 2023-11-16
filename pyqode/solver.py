@@ -9,6 +9,7 @@ from pyqode.utils import parse_su2_config
 from numpy import interp
 from pyqode.nozzle_2d import gen_nozzle_mesh_from_config
 import ray
+import pandas as pd
 
 PYQODE_SOLVER = Path(__file__).parent / 'src' / 'eulerQ1D'
 #SU2_SOLVER = Path(__file__).parent / 'src' / 'SU2_CFD'
@@ -112,6 +113,20 @@ class Solver:
             T = np.loadtxt(self.output_path / 'T.txt')
             np.savetxt(self.output_path  / 'T_wall.txt', np.ones_like(T) * T_wall)
 
+    def check_convergence(self, tol=None) -> bool: 
+        if tol is None:
+            tol = self.config['solver_tol']
+
+        maxres = -np.inf
+        for residue in ['rese.txt', 'resrho.txt', 'resrhou.txt']:
+            last_residue = np.loadtxt(self.output_path / residue)[-1]
+            if last_residue > maxres:
+                maxres = last_residue
+        if maxres <= tol:
+            return True
+        else:
+            return False
+
 class RaySolver(Solver):
     def __init__(self, 
             config: dict,
@@ -163,12 +178,36 @@ class SU2Solver:
             config_file = Path(config_file).resolve()
         if cwd is None:
             cwd = Path(self.config_file).parent
+        
+        self.cwd = cwd
 
         self.runtime = timeit.default_timer()
         p = subprocess.Popen([self.executable, config_file.name], cwd=cwd)
         p.wait()
         self.runtime = timeit.default_timer() - self.runtime
         print('runtime: ' + str(self.runtime) + 's')
+
+    def check_convergence(self, tol=None) -> bool:
+        """Check if the solver has converged
+        
+        Args:
+            tol (float, optional): Residue tolerance. Defaults to -3.
+            
+        Returns:
+            bool: True if converged, False otherwise
+        """
+        if tol is None:
+            tol = self.config['solver_tol']
+
+        residue = pd.read_csv(self.cwd / 'history.csv', header=0, delimiter=',')
+        keys = residue.keys()
+
+        converged = False
+        for i in range(1, len(keys)):
+            if residue[keys[i]].values[-1] <= tol:
+                converged = True
+        
+        return converged
 
 @ray.remote
 class RaySolver(Solver):
